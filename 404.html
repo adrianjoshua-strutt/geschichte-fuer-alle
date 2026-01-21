@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Geschichte für Alle - Inklusives Stadtführungsprojekt">
+    <title>Geschichte für Alle</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Redirect to index.html with the path as a parameter
+        // Get base path (for GitHub Pages subdirectory support)
+        const pathSegments = window.location.pathname.split('/').filter(p => p);
+        
+        // Check if we're in a subdirectory deployment (e.g., /repository-name/page)
+        // If so, remove the first segment (repository name) to get the actual page
+        let page = '';
+        if (pathSegments.length > 0) {
+            // Assume last segment is the page name
+            page = pathSegments[pathSegments.length - 1];
+            // Sanitize page name to prevent malicious redirects
+            page = page.replace(/[^a-zA-Z0-9-_]/g, '');
+        }
+        
+        if (page) {
+            window.location.href = './?page=' + encodeURIComponent(page);
+        } else {
+            window.location.href = './';
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Geschichte für Alle</h1>
+            <p class="subtitle">Inklusives Stadtführungsprojekt</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="content">
+            <div id="loading">Weiterleitung...</div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FH Fulda - Geschichte für Alle</p>
+        </div>
+    </footer>
+</body>
+</html>
