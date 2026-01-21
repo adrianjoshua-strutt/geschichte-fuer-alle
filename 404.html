@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Geschichte für Alle - Inklusives Stadtführungsprojekt">
+    <title>Geschichte für Alle</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script>
+        // Redirect to index.html with the path as a parameter
+        const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
+        if (path) {
+            window.location.href = '/?page=' + path;
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Geschichte für Alle</h1>
+            <p class="subtitle">Inklusives Stadtführungsprojekt</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="content">
+            <div id="loading">Weiterleitung...</div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 FH Fulda - Geschichte für Alle</p>
+        </div>
+    </footer>
+</body>
+</html>
