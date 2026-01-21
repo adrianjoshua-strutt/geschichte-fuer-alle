@@ -13,8 +13,19 @@
         
         // Otherwise, try to get from path
         const path = window.location.pathname;
-        const pageName = path.split('/').filter(p => p).pop() || '';
-        return pageName;
+        const pathSegments = path.split('/').filter(p => p);
+        
+        // For GitHub Pages subdirectory deployment (e.g., /repository-name/page)
+        // The last segment would be the page name (if not index.html)
+        if (pathSegments.length > 0) {
+            const lastSegment = pathSegments[pathSegments.length - 1];
+            // Ignore index.html or if it ends with .html
+            if (lastSegment !== 'index.html' && !lastSegment.endsWith('.html')) {
+                return lastSegment;
+            }
+        }
+        
+        return '';
     }
     
     // Load content for the current page

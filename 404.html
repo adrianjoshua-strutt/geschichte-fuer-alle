@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Geschichte für Alle - Inklusives Stadtführungsprojekt">
     <title>Geschichte für Alle</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="styles.css">
     <script>
         // Redirect to index.html with the path as a parameter
-        const path = window.location.pathname.replace(/^\//, '').replace(/\/$/, '');
-        if (path) {
-            window.location.href = '/?page=' + path;
+        // Get base path (for GitHub Pages subdirectory support)
+        const pathSegments = window.location.pathname.split('/').filter(p => p);
+        
+        // Check if we're in a subdirectory deployment (e.g., /repository-name/page)
+        // If so, remove the first segment (repository name) to get the actual page
+        let page = '';
+        if (pathSegments.length > 0) {
+            // Assume last segment is the page name
+            page = pathSegments[pathSegments.length - 1];
+        }
+        
+        if (page) {
+            window.location.href = './?page=' + page;
+        } else {
+            window.location.href = './';
         }
     </script>
 </head>
