@@ -8,7 +8,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const pageParam = urlParams.get('page');
         if (pageParam) {
-            return pageParam;
+            return sanitizePageName(pageParam);
         }
         
         // Otherwise, try to get from path
@@ -21,11 +21,17 @@
             const lastSegment = pathSegments[pathSegments.length - 1];
             // Ignore index.html or if it ends with .html
             if (lastSegment !== 'index.html' && !lastSegment.endsWith('.html')) {
-                return lastSegment;
+                return sanitizePageName(lastSegment);
             }
         }
         
         return '';
+    }
+    
+    // Sanitize page name to prevent path traversal attacks
+    function sanitizePageName(name) {
+        // Only allow alphanumeric characters, hyphens, and underscores
+        return name.replace(/[^a-zA-Z0-9-_]/g, '');
     }
     
     // Load content for the current page

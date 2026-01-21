@@ -17,10 +17,12 @@
         if (pathSegments.length > 0) {
             // Assume last segment is the page name
             page = pathSegments[pathSegments.length - 1];
+            // Sanitize page name to prevent malicious redirects
+            page = page.replace(/[^a-zA-Z0-9-_]/g, '');
         }
         
         if (page) {
-            window.location.href = './?page=' + page;
+            window.location.href = './?page=' + encodeURIComponent(page);
         } else {
             window.location.href = './';
         }
