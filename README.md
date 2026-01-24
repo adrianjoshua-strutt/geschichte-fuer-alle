@@ -8,10 +8,13 @@ Eine barrierefreie Webanwendung für QR-Code-basierte Stadtführungen in Fulda. 
 
 ## Demo
 
-- **Hauptseite:** [Geschichte für Alle](https://adrianjoshua-strutt.github.io/geschichte-f-r-alle/)
+- **Hauptseite:** [Geschichte für Alle](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/)
 - **Beispiel-Standorte:**
-  - [Dom](https://adrianjoshua-strutt.github.io/geschichte-f-r-alle/dom)
-  - [Stadtschloss](https://adrianjoshua-strutt.github.io/geschichte-f-r-alle/stadtschloss)
+  - [Paulustor](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/paulustor)
+  - [Domplatz](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/domplatz)
+  - [Stadtschloss](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/stadtschloss)
+  - [Thalia](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/thalia)
+  - [Stadtmauer](https://adrianjoshua-strutt.github.io/geschichte-fuer-alle/stadtmauer)
 
 ## Features
 
