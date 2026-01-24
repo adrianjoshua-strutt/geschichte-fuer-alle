@@ -6,7 +6,6 @@
     <meta name="description" content="Geschichte für Alle - Inklusives Stadtführungsprojekt">
     <title>Geschichte für Alle</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/ttsreader-plugin/main.js" defer></script>
 </head>
 <body>
     <header>
@@ -24,9 +23,15 @@
             </div>
             <div id="display" style="display: none;">
                 <h2 id="title"></h2>
-                <div id="text-content"></div>
                 
-                <!-- TTSReader Plugin handles text-to-speech -->
+                <!-- Text-to-Speech Controls -->
+                <div id="tts-controls" style="margin: 20px 0;">
+                    <button id="tts-play-btn" class="tts-button">▶ Text vorlesen</button>
+                    <button id="tts-pause-btn" class="tts-button" style="display: none;">⏸ Pause</button>
+                    <button id="tts-stop-btn" class="tts-button" style="display: none;">⏹ Stop</button>
+                </div>
+                
+                <div id="text-content"></div>
                 
                 <div id="audio-player" style="display: none;">
                     <h3>Audioführung</h3>

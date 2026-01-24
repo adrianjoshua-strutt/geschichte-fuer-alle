@@ -2,8 +2,125 @@
 (function() {
     'use strict';
     
-    // Text-to-Speech functionality is now handled by TTSReader Plugin
-    // No local TTS state needed
+    // Text-to-Speech functionality using Web Speech API
+    let speechSynthesis = window.speechSynthesis;
+    let currentUtterance = null;
+    let isPaused = false;
+    
+    // TTS Control functions
+    function initializeTTS() {
+        const playBtn = document.getElementById('tts-play-btn');
+        const pauseBtn = document.getElementById('tts-pause-btn');
+        const stopBtn = document.getElementById('tts-stop-btn');
+        
+        if (playBtn) {
+            playBtn.addEventListener('click', playText);
+        }
+        if (pauseBtn) {
+            pauseBtn.addEventListener('click', pauseText);
+        }
+        if (stopBtn) {
+            stopBtn.addEventListener('click', stopText);
+        }
+    }
+    
+    function playText() {
+        const textContent = document.getElementById('text-content');
+        const playBtn = document.getElementById('tts-play-btn');
+        const pauseBtn = document.getElementById('tts-pause-btn');
+        const stopBtn = document.getElementById('tts-stop-btn');
+        
+        if (!textContent || !textContent.textContent.trim()) {
+            alert('Couldn\'t find any text to read.');
+            return;
+        }
+        
+        // If paused, resume
+        if (isPaused && currentUtterance) {
+            speechSynthesis.resume();
+            isPaused = false;
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'inline-block';
+            return;
+        }
+        
+        // Stop any ongoing speech
+        speechSynthesis.cancel();
+        
+        // Create new utterance
+        currentUtterance = new SpeechSynthesisUtterance(textContent.textContent);
+        
+        // Set German as the default language
+        currentUtterance.lang = 'de-DE';
+        
+        // Try to find a German voice
+        const voices = speechSynthesis.getVoices();
+        const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
+        if (germanVoice) {
+            currentUtterance.voice = germanVoice;
+        }
+        
+        // Set speech parameters
+        currentUtterance.rate = 0.9; // Slightly slower for better comprehension
+        currentUtterance.pitch = 1.0;
+        currentUtterance.volume = 1.0;
+        
+        // Event handlers
+        currentUtterance.onstart = function() {
+            playBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'inline-block';
+        };
+        
+        currentUtterance.onend = function() {
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            isPaused = false;
+            currentUtterance = null;
+        };
+        
+        currentUtterance.onerror = function(event) {
+            console.error('Speech synthesis error:', event);
+            playBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+            stopBtn.style.display = 'none';
+            isPaused = false;
+            currentUtterance = null;
+        };
+        
+        // Start speaking
+        speechSynthesis.speak(currentUtterance);
+    }
+    
+    function pauseText() {
+        const playBtn = document.getElementById('tts-play-btn');
+        const pauseBtn = document.getElementById('tts-pause-btn');
+        
+        if (speechSynthesis.speaking && !isPaused) {
+            speechSynthesis.pause();
+            isPaused = true;
+            playBtn.style.display = 'inline-block';
+            playBtn.textContent = '▶ Fortsetzen';
+            pauseBtn.style.display = 'none';
+        }
+    }
+    
+    function stopText() {
+        const playBtn = document.getElementById('tts-play-btn');
+        const pauseBtn = document.getElementById('tts-pause-btn');
+        const stopBtn = document.getElementById('tts-stop-btn');
+        
+        speechSynthesis.cancel();
+        isPaused = false;
+        currentUtterance = null;
+        
+        playBtn.style.display = 'inline-block';
+        playBtn.textContent = '▶ Text vorlesen';
+        pauseBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+    }
     
     // Get the page from URL parameter or path
     function getCurrentPage() {
@@ -112,19 +229,23 @@
             .join(' ');
     }
     
-    // Text-to-Speech is now handled by TTSReader Plugin
-    // Old TTS functions removed
-    
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', function() {
         const pageName = getCurrentPage();
         loadContent(pageName);
-        // TTS initialization removed - now handled by TTSReader Plugin
+        initializeTTS();
+        
+        // Load voices (they may not be available immediately)
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = function() {
+                // Voices are now loaded
+            };
+        }
     });
     
     // Handle browser back/forward
     window.addEventListener('popstate', function() {
-        // TTS stop removed - now handled by TTSReader Plugin
+        stopText(); // Stop TTS when navigating
         const pageName = getCurrentPage();
         loadContent(pageName);
     });
