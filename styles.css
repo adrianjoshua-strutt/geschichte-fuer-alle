@@ -89,6 +89,135 @@ main {
     margin-bottom: 15px;
 }
 
+/* Text-to-Speech Control Panel */
+#tts-panel {
+    background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f2 100%);
+    border: 2px solid #3498db;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 30px 0;
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15);
+}
+
+#tts-panel h3 {
+    color: #2c3e50;
+    margin-bottom: 18px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.tts-controls {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tts-btn {
+    flex: 1;
+    min-width: 140px;
+    max-width: 220px;
+    padding: 18px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tts-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tts-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tts-btn-primary {
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+}
+
+.tts-btn-primary:hover {
+    background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+}
+
+.tts-btn-primary.playing {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+.tts-btn-primary.playing:hover {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+}
+
+.tts-btn-secondary {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.tts-btn-secondary:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.btn-text {
+    font-size: 1.05rem;
+}
+
+.tts-options {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.tts-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: white;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.tts-option:hover {
+    background: #f0f8ff;
+    transform: translateY(-1px);
+}
+
+.tts-option input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #3498db;
+}
+
+.option-text {
+    user-select: none;
+}
+
 /* Audio Player */
 #audio-player {
     background: #f8f9fa;
@@ -151,6 +280,24 @@ footer p {
     
     .container {
         padding: 0 15px;
+    }
+    
+    .tts-controls {
+        flex-direction: column;
+    }
+    
+    .tts-btn {
+        max-width: 100%;
+        min-width: 100%;
+    }
+    
+    .tts-options {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .tts-option {
+        justify-content: center;
     }
 }
 
