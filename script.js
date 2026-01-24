@@ -31,7 +31,15 @@
         const stopBtn = document.getElementById('tts-stop-btn');
         
         if (!textContent || !textContent.textContent.trim()) {
-            alert('Couldn\'t find any text to read.');
+            // Show error in the UI instead of alert
+            const controls = document.getElementById('tts-controls');
+            const errorMsg = document.createElement('div');
+            errorMsg.style.color = '#e74c3c';
+            errorMsg.style.marginTop = '10px';
+            errorMsg.style.fontSize = '0.9rem';
+            errorMsg.textContent = 'Kein Text zum Vorlesen gefunden.';
+            controls.appendChild(errorMsg);
+            setTimeout(() => errorMsg.remove(), 3000);
             return;
         }
         
@@ -54,11 +62,13 @@
         // Set German as the default language
         currentUtterance.lang = 'de-DE';
         
-        // Try to find a German voice
+        // Try to find a German voice (voices should be loaded by now)
         const voices = speechSynthesis.getVoices();
-        const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
-        if (germanVoice) {
-            currentUtterance.voice = germanVoice;
+        if (voices.length > 0) {
+            const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
+            if (germanVoice) {
+                currentUtterance.voice = germanVoice;
+            }
         }
         
         // Set speech parameters
@@ -235,12 +245,17 @@
         loadContent(pageName);
         initializeTTS();
         
-        // Load voices (they may not be available immediately)
+        // Ensure voices are loaded for speech synthesis
+        // Voices may not be available immediately on some browsers
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = function() {
-                // Voices are now loaded
+                // Voices are now loaded and ready to use
+                const voices = speechSynthesis.getVoices();
+                console.log('Loaded ' + voices.length + ' voices for TTS');
             };
         }
+        // Also trigger voice loading immediately
+        speechSynthesis.getVoices();
     });
     
     // Handle browser back/forward
