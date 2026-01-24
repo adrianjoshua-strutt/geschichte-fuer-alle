@@ -6,6 +6,7 @@
     <meta name="description" content="Geschichte für Alle - Inklusives Stadtführungsprojekt">
     <title>Geschichte für Alle</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/ttsreader-plugin/main.js" defer></script>
 </head>
 <body>
     <header>
@@ -25,30 +26,7 @@
                 <h2 id="title"></h2>
                 <div id="text-content"></div>
                 
-                <!-- Text-to-Speech Control Panel -->
-                <div id="tts-panel">
-                    <h3>Text vorlesen lassen</h3>
-                    <div class="tts-controls">
-                        <button id="tts-play-pause" class="tts-btn tts-btn-primary" aria-label="Text vorlesen">
-                            <span class="btn-icon">▶</span>
-                            <span class="btn-text">Vorlesen</span>
-                        </button>
-                        <button id="tts-stop" class="tts-btn tts-btn-secondary" aria-label="Stoppen">
-                            <span class="btn-icon">■</span>
-                            <span class="btn-text">Stoppen</span>
-                        </button>
-                    </div>
-                    <div class="tts-options">
-                        <label class="tts-option">
-                            <input type="checkbox" id="tts-slow-speed" aria-label="Halbe Geschwindigkeit">
-                            <span class="option-text">0.5x Geschwindigkeit</span>
-                        </label>
-                        <label class="tts-option">
-                            <input type="checkbox" id="tts-repeat" aria-label="Wiederholen">
-                            <span class="option-text">Wiederholen</span>
-                        </label>
-                    </div>
-                </div>
+                <!-- TTSReader Plugin handles text-to-speech -->
                 
                 <div id="audio-player" style="display: none;">
                     <h3>Audioführung</h3>
