@@ -2,11 +2,8 @@
 (function() {
     'use strict';
     
-    // Text-to-Speech state
-    let ttsUtterance = null;
-    let ttsCurrentText = '';
-    let ttsIsPlaying = false;
-    const REPEAT_DELAY_MS = 500; // Delay between repeat cycles
+    // Text-to-Speech functionality is now handled by TTSReader Plugin
+    // No local TTS state needed
     
     // Get the page from URL parameter or path
     function getCurrentPage() {
@@ -115,155 +112,19 @@
             .join(' ');
     }
     
-    // Text-to-Speech functions
-    function initializeTTS() {
-        // Check if speech synthesis is supported
-        if (!('speechSynthesis' in window)) {
-            console.warn('Speech synthesis not supported in this browser');
-            const ttsPanel = document.getElementById('tts-panel');
-            if (ttsPanel) {
-                ttsPanel.style.display = 'none';
-            }
-            return;
-        }
-        
-        const playPauseBtn = document.getElementById('tts-play-pause');
-        const stopBtn = document.getElementById('tts-stop');
-        const slowSpeedCheckbox = document.getElementById('tts-slow-speed');
-        const repeatCheckbox = document.getElementById('tts-repeat');
-        
-        if (!playPauseBtn || !stopBtn) return;
-        
-        // Play/Pause button
-        playPauseBtn.addEventListener('click', function() {
-            if (ttsIsPlaying) {
-                pauseTTS();
-            } else {
-                playTTS();
-            }
-        });
-        
-        // Stop button
-        stopBtn.addEventListener('click', function() {
-            stopTTS();
-        });
-        
-        // Speed change
-        if (slowSpeedCheckbox) {
-            slowSpeedCheckbox.addEventListener('change', function() {
-                if (ttsIsPlaying) {
-                    // Restart with new speed
-                    stopTTS();
-                    playTTS();
-                }
-            });
-        }
-    }
-    
-    function playTTS() {
-        const textContentEl = document.getElementById('text-content');
-        const playPauseBtn = document.getElementById('tts-play-pause');
-        const slowSpeedCheckbox = document.getElementById('tts-slow-speed');
-        const repeatCheckbox = document.getElementById('tts-repeat');
-        
-        if (!textContentEl || !playPauseBtn) return;
-        
-        // Get text content
-        const text = textContentEl.textContent.trim();
-        if (!text) return;
-        
-        // Cancel any existing speech
-        window.speechSynthesis.cancel();
-        
-        // Create new utterance
-        ttsUtterance = new SpeechSynthesisUtterance(text);
-        ttsUtterance.lang = 'de-DE'; // German language
-        ttsUtterance.rate = slowSpeedCheckbox && slowSpeedCheckbox.checked ? 0.5 : 1.0;
-        ttsUtterance.pitch = 1.0;
-        ttsUtterance.volume = 1.0;
-        
-        // Event handlers
-        ttsUtterance.onstart = function() {
-            ttsIsPlaying = true;
-            updatePlayPauseButton(true);
-        };
-        
-        ttsUtterance.onend = function() {
-            // Check if repeat is enabled
-            if (repeatCheckbox && repeatCheckbox.checked) {
-                // Restart speech with a new utterance
-                setTimeout(() => {
-                    playTTS();
-                }, REPEAT_DELAY_MS);
-            } else {
-                ttsIsPlaying = false;
-                updatePlayPauseButton(false);
-            }
-        };
-        
-        ttsUtterance.onerror = function(event) {
-            console.error('Speech synthesis error:', event);
-            ttsIsPlaying = false;
-            updatePlayPauseButton(false);
-        };
-        
-        // Start speaking
-        window.speechSynthesis.speak(ttsUtterance);
-        ttsCurrentText = text;
-    }
-    
-    function pauseTTS() {
-        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
-            window.speechSynthesis.pause();
-            ttsIsPlaying = false;
-            updatePlayPauseButton(false);
-        } else if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-            ttsIsPlaying = true;
-            updatePlayPauseButton(true);
-        } else {
-            // Not currently speaking, start from beginning
-            playTTS();
-        }
-    }
-    
-    function stopTTS() {
-        window.speechSynthesis.cancel();
-        ttsIsPlaying = false;
-        ttsUtterance = null;
-        updatePlayPauseButton(false);
-    }
-    
-    function updatePlayPauseButton(isPlaying) {
-        const playPauseBtn = document.getElementById('tts-play-pause');
-        if (!playPauseBtn) return;
-        
-        const icon = playPauseBtn.querySelector('.btn-icon');
-        const text = playPauseBtn.querySelector('.btn-text');
-        
-        if (isPlaying) {
-            playPauseBtn.classList.add('playing');
-            if (icon) icon.textContent = '⏸';
-            if (text) text.textContent = 'Pause';
-            playPauseBtn.setAttribute('aria-label', 'Pause');
-        } else {
-            playPauseBtn.classList.remove('playing');
-            if (icon) icon.textContent = '▶';
-            if (text) text.textContent = 'Vorlesen';
-            playPauseBtn.setAttribute('aria-label', 'Text vorlesen');
-        }
-    }
+    // Text-to-Speech is now handled by TTSReader Plugin
+    // Old TTS functions removed
     
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', function() {
         const pageName = getCurrentPage();
         loadContent(pageName);
-        initializeTTS();
+        // TTS initialization removed - now handled by TTSReader Plugin
     });
     
     // Handle browser back/forward
     window.addEventListener('popstate', function() {
-        stopTTS(); // Stop any playing speech when navigating
+        // TTS stop removed - now handled by TTSReader Plugin
         const pageName = getCurrentPage();
         loadContent(pageName);
     });
