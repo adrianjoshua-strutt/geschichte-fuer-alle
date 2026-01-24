@@ -152,11 +152,8 @@
             slowSpeedCheckbox.addEventListener('change', function() {
                 if (ttsIsPlaying) {
                     // Restart with new speed
-                    const wasPlaying = ttsIsPlaying;
                     stopTTS();
-                    if (wasPlaying) {
-                        playTTS();
-                    }
+                    playTTS();
                 }
             });
         }
@@ -193,9 +190,9 @@
         ttsUtterance.onend = function() {
             // Check if repeat is enabled
             if (repeatCheckbox && repeatCheckbox.checked) {
-                // Restart speech
+                // Restart speech with a new utterance
                 setTimeout(() => {
-                    window.speechSynthesis.speak(ttsUtterance);
+                    playTTS();
                 }, 500);
             } else {
                 ttsIsPlaying = false;
@@ -223,6 +220,9 @@
             window.speechSynthesis.resume();
             ttsIsPlaying = true;
             updatePlayPauseButton(true);
+        } else {
+            // Not currently speaking, start from beginning
+            playTTS();
         }
     }
     
