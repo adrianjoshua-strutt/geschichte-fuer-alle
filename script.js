@@ -6,6 +6,7 @@
     let ttsUtterance = null;
     let ttsCurrentText = '';
     let ttsIsPlaying = false;
+    const REPEAT_DELAY_MS = 500; // Delay between repeat cycles
     
     // Get the page from URL parameter or path
     function getCurrentPage() {
@@ -193,7 +194,7 @@
                 // Restart speech with a new utterance
                 setTimeout(() => {
                     playTTS();
-                }, 500);
+                }, REPEAT_DELAY_MS);
             } else {
                 ttsIsPlaying = false;
                 updatePlayPauseButton(false);
