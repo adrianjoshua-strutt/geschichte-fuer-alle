@@ -40,8 +40,14 @@
                     </div>
                     <div class="tts-options">
                         <label class="tts-option">
-                            <input type="checkbox" id="tts-slow-speed" aria-label="Halbe Geschwindigkeit">
-                            <span class="option-text">0.5x Geschwindigkeit</span>
+                            <span class="option-text">Stimme:</span>
+                            <select id="tts-voice-select" class="tts-voice-select" aria-label="Stimme auswählen">
+                                <option value="auto">Wird geladen...</option>
+                            </select>
+                        </label>
+                        <label class="tts-option">
+                            <input type="checkbox" id="tts-slow-speed" aria-label="Langsamere Geschwindigkeit">
+                            <span class="option-text">Langsamer sprechen</span>
                         </label>
                         <label class="tts-option">
                             <input type="checkbox" id="tts-repeat" aria-label="Wiederholen">

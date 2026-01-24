@@ -7,6 +7,8 @@
     let ttsCurrentText = '';
     let ttsIsPlaying = false;
     const REPEAT_DELAY_MS = 500; // Delay between repeat cycles
+    let availableVoices = [];
+    let selectedVoice = null;
     
     // Get the page from URL parameter or path
     function getCurrentPage() {
@@ -116,6 +118,117 @@
     }
     
     // Text-to-Speech functions
+    function loadVoices() {
+        return new Promise((resolve) => {
+            availableVoices = window.speechSynthesis.getVoices();
+            if (availableVoices.length > 0) {
+                resolve();
+                return;
+            }
+            
+            // Some browsers load voices asynchronously
+            window.speechSynthesis.onvoiceschanged = () => {
+                availableVoices = window.speechSynthesis.getVoices();
+                resolve();
+            };
+            
+            // Timeout fallback
+            setTimeout(resolve, 1000);
+        });
+    }
+    
+    function selectBestVoice() {
+        if (availableVoices.length === 0) {
+            return null;
+        }
+        
+        // Filter German voices
+        const germanVoices = availableVoices.filter(voice => 
+            voice.lang.startsWith('de')
+        );
+        
+        if (germanVoices.length === 0) {
+            return null;
+        }
+        
+        // Priority order for high-quality voices
+        // Google voices are generally the best quality
+        const priorities = [
+            /google.*deutsch/i,
+            /google.*german/i,
+            /google/i,
+            /.*weiblich/i,  // Female voices often sound better
+            /.*female/i,
+            /.*natural/i,
+            /.*premium/i,
+            /.*enhanced/i,
+        ];
+        
+        // Try to find a voice matching our priorities
+        for (const pattern of priorities) {
+            const match = germanVoices.find(voice => 
+                pattern.test(voice.name)
+            );
+            if (match) {
+                return match;
+            }
+        }
+        
+        // Fallback: return the first German voice
+        return germanVoices[0];
+    }
+    
+    function populateVoiceSelector() {
+        const voiceSelect = document.getElementById('tts-voice-select');
+        if (!voiceSelect) return;
+        
+        // Clear existing options
+        voiceSelect.innerHTML = '';
+        
+        // Get German voices
+        const germanVoices = availableVoices.filter(voice => 
+            voice.lang.startsWith('de')
+        );
+        
+        if (germanVoices.length === 0) {
+            const option = document.createElement('option');
+            option.textContent = 'Keine deutschen Stimmen verfügbar';
+            voiceSelect.appendChild(option);
+            voiceSelect.disabled = true;
+            return;
+        }
+        
+        // Add default option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = 'auto';
+        defaultOption.textContent = 'Automatisch (Beste Qualität)';
+        voiceSelect.appendChild(defaultOption);
+        
+        // Add each German voice as an option
+        germanVoices.forEach((voice, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            
+            // Format voice name nicely
+            let displayName = voice.name;
+            // Add quality indicators
+            if (voice.name.toLowerCase().includes('google')) {
+                displayName += ' ⭐'; // Star for Google voices
+            }
+            if (voice.localService) {
+                displayName += ' (Offline)';
+            } else {
+                displayName += ' (Online)';
+            }
+            
+            option.textContent = displayName;
+            voiceSelect.appendChild(option);
+        });
+        
+        // Select the best voice by default
+        voiceSelect.value = 'auto';
+    }
+    
     function initializeTTS() {
         // Check if speech synthesis is supported
         if (!('speechSynthesis' in window)) {
@@ -127,12 +240,40 @@
             return;
         }
         
+        // Load voices and set up voice selector
+        loadVoices().then(() => {
+            selectedVoice = selectBestVoice();
+            populateVoiceSelector();
+        });
+        
         const playPauseBtn = document.getElementById('tts-play-pause');
         const stopBtn = document.getElementById('tts-stop');
         const slowSpeedCheckbox = document.getElementById('tts-slow-speed');
         const repeatCheckbox = document.getElementById('tts-repeat');
+        const voiceSelect = document.getElementById('tts-voice-select');
         
         if (!playPauseBtn || !stopBtn) return;
+        
+        // Voice selector change
+        if (voiceSelect) {
+            voiceSelect.addEventListener('change', function() {
+                const value = voiceSelect.value;
+                if (value === 'auto') {
+                    selectedVoice = selectBestVoice();
+                } else {
+                    const germanVoices = availableVoices.filter(voice => 
+                        voice.lang.startsWith('de')
+                    );
+                    selectedVoice = germanVoices[parseInt(value)];
+                }
+                
+                // Restart if currently playing
+                if (ttsIsPlaying) {
+                    stopTTS();
+                    playTTS();
+                }
+            });
+        }
         
         // Play/Pause button
         playPauseBtn.addEventListener('click', function() {
@@ -178,7 +319,14 @@
         // Create new utterance
         ttsUtterance = new SpeechSynthesisUtterance(text);
         ttsUtterance.lang = 'de-DE'; // German language
-        ttsUtterance.rate = slowSpeedCheckbox && slowSpeedCheckbox.checked ? 0.5 : 1.0;
+        
+        // Set the selected voice
+        if (selectedVoice) {
+            ttsUtterance.voice = selectedVoice;
+        }
+        
+        // Optimized speech parameters for better quality
+        ttsUtterance.rate = slowSpeedCheckbox && slowSpeedCheckbox.checked ? 0.7 : 0.9;
         ttsUtterance.pitch = 1.0;
         ttsUtterance.volume = 1.0;
         
