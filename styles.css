@@ -89,6 +89,43 @@ main {
     margin-bottom: 15px;
 }
 
+/* Text-to-Speech Buttons */
+.tts-button {
+    padding: 12px 24px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tts-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tts-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#tts-pause-btn, #tts-stop-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+#tts-controls {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f0f8ff;
+    border-radius: 8px;
+    border: 1px solid #3498db;
+}
+
 /* Text-to-Speech Control Panel */
 #tts-panel {
     background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f2 100%);
