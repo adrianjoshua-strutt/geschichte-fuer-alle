@@ -19,6 +19,7 @@
         progressFill = document.getElementById('progress-fill');
         currentTimeEl = document.getElementById('current-time');
         durationEl = document.getElementById('duration');
+        progressContainer = document.querySelector('.progress-bar');
         
         if (!audioElement || !playPauseBtn) return;
         
@@ -49,11 +50,13 @@
             });
             
             // Click on progress bar to seek
-            progressContainer = document.querySelector('.progress-bar');
+            // Note: progressContainer is updated on each init to handle page navigation
             if (progressContainer) {
                 progressContainer.addEventListener('click', function(e) {
-                    if (!audioElement || !isFinite(audioElement.duration)) return;
-                    const rect = progressContainer.getBoundingClientRect();
+                    // Get fresh reference to progressContainer in case it changed
+                    const container = document.querySelector('.progress-bar');
+                    if (!audioElement || !isFinite(audioElement.duration) || !container) return;
+                    const rect = container.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     audioElement.currentTime = percent * audioElement.duration;
                 });
