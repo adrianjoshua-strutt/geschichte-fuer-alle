@@ -8,6 +8,7 @@
     let progressFill = null;
     let currentTimeEl = null;
     let durationEl = null;
+    let isInitialized = false;
     
     // Initialize MP3 Player
     function initializeMP3Player() {
@@ -19,36 +20,41 @@
         
         if (!audioElement || !playPauseBtn) return;
         
-        // Play/Pause button click
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        
-        // Update progress bar and time
-        audioElement.addEventListener('timeupdate', updateProgress);
-        
-        // Update duration when metadata is loaded
-        audioElement.addEventListener('loadedmetadata', function() {
-            if (durationEl) {
-                durationEl.textContent = formatTime(audioElement.duration);
-            }
-        });
-        
-        // Reset button when audio ends
-        audioElement.addEventListener('ended', function() {
-            playPauseBtn.classList.remove('playing');
-            playPauseBtn.querySelector('.play-icon').textContent = '▶';
-            if (progressFill) progressFill.style.width = '0%';
-            if (currentTimeEl) currentTimeEl.textContent = '0:00';
-        });
-        
-        // Click on progress bar to seek
-        const progressContainer = document.querySelector('.progress-bar');
-        if (progressContainer) {
-            progressContainer.addEventListener('click', function(e) {
-                if (!audioElement.duration) return;
-                const rect = progressContainer.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audioElement.currentTime = percent * audioElement.duration;
+        // Only add event listeners once
+        if (!isInitialized) {
+            // Play/Pause button click
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            
+            // Update progress bar and time
+            audioElement.addEventListener('timeupdate', updateProgress);
+            
+            // Update duration when metadata is loaded
+            audioElement.addEventListener('loadedmetadata', function() {
+                if (durationEl) {
+                    durationEl.textContent = formatTime(audioElement.duration);
+                }
             });
+            
+            // Reset button when audio ends
+            audioElement.addEventListener('ended', function() {
+                playPauseBtn.classList.remove('playing');
+                playPauseBtn.querySelector('.play-icon').textContent = '▶';
+                if (progressFill) progressFill.style.width = '0%';
+                if (currentTimeEl) currentTimeEl.textContent = '0:00';
+            });
+            
+            // Click on progress bar to seek
+            const progressContainer = document.querySelector('.progress-bar');
+            if (progressContainer) {
+                progressContainer.addEventListener('click', function(e) {
+                    if (!audioElement.duration) return;
+                    const rect = progressContainer.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    audioElement.currentTime = percent * audioElement.duration;
+                });
+            }
+            
+            isInitialized = true;
         }
     }
     
