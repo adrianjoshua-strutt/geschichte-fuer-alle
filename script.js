@@ -67,7 +67,9 @@
         const playIcon = playPauseBtn ? playPauseBtn.querySelector('.play-icon') : null;
         
         if (audioElement.paused) {
-            audioElement.play();
+            audioElement.play().catch(function(error) {
+                console.error('Playback error:', error);
+            });
             if (playPauseBtn) playPauseBtn.classList.add('playing');
             if (playIcon) playIcon.textContent = '⏸';
         } else {
@@ -85,7 +87,9 @@
         
         // If audio was playing, keep it playing
         if (!audioElement.paused) {
-            audioElement.play();
+            audioElement.play().catch(function(error) {
+                console.error('Playback error:', error);
+            });
         }
     }
     
