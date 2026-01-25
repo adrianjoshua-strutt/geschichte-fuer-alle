@@ -8,10 +8,12 @@
     let progressFill = null;
     let currentTimeEl = null;
     let durationEl = null;
-    let isInitialized = false;
+    let progressContainer = null;
+    let listenersAttached = false;
     
     // Initialize MP3 Player
     function initializeMP3Player() {
+        // Update element references (these may change when content loads)
         audioElement = document.getElementById('audio-element');
         playPauseBtn = document.getElementById('play-pause-btn');
         progressFill = document.getElementById('progress-fill');
@@ -20,8 +22,8 @@
         
         if (!audioElement || !playPauseBtn) return;
         
-        // Only add event listeners once
-        if (!isInitialized) {
+        // Only attach event listeners once
+        if (!listenersAttached) {
             // Play/Pause button click
             playPauseBtn.addEventListener('click', togglePlayPause);
             
@@ -37,24 +39,27 @@
             
             // Reset button when audio ends
             audioElement.addEventListener('ended', function() {
-                playPauseBtn.classList.remove('playing');
-                playPauseBtn.querySelector('.play-icon').textContent = '▶';
+                if (playPauseBtn) {
+                    playPauseBtn.classList.remove('playing');
+                    const playIcon = playPauseBtn.querySelector('.play-icon');
+                    if (playIcon) playIcon.textContent = '▶';
+                }
                 if (progressFill) progressFill.style.width = '0%';
                 if (currentTimeEl) currentTimeEl.textContent = '0:00';
             });
             
             // Click on progress bar to seek
-            const progressContainer = document.querySelector('.progress-bar');
+            progressContainer = document.querySelector('.progress-bar');
             if (progressContainer) {
                 progressContainer.addEventListener('click', function(e) {
-                    if (!audioElement.duration) return;
+                    if (!audioElement || !audioElement.duration) return;
                     const rect = progressContainer.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     audioElement.currentTime = percent * audioElement.duration;
                 });
             }
             
-            isInitialized = true;
+            listenersAttached = true;
         }
     }
     
