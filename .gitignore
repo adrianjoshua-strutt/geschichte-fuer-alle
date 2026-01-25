@@ -1,5 +1,3 @@
-# MP3 files are managed separately
-*.mp3
 
 # OS files
 .DS_Store
