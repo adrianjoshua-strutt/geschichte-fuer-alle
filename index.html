@@ -24,21 +24,33 @@
             <div id="display" style="display: none;">
                 <h2 id="title"></h2>
                 
-                <!-- Text-to-Speech Controls -->
-                <div id="tts-controls" style="margin: 20px 0;">
-                    <button id="tts-play-btn" class="tts-button">▶ Text vorlesen</button>
-                    <button id="tts-pause-btn" class="tts-button" style="display: none;">⏸ Pause</button>
-                    <button id="tts-stop-btn" class="tts-button" style="display: none;">⏹ Stop</button>
-                </div>
-                
                 <div id="text-content"></div>
                 
+                <!-- MP3 Player -->
                 <div id="audio-player" style="display: none;">
-                    <h3>Audioführung</h3>
-                    <audio controls>
-                        <source id="audio-source" type="audio/mpeg">
-                        Ihr Browser unterstützt das Audio-Element nicht.
-                    </audio>
+                    <div class="mp3-player-container">
+                        <h3>🎧 Audioführung</h3>
+                        <div class="mp3-player">
+                            <button id="play-pause-btn" class="play-button" aria-label="Wiedergabe">
+                                <span class="play-icon">▶</span>
+                            </button>
+                            <div class="player-info">
+                                <div class="progress-container">
+                                    <div class="progress-bar">
+                                        <div id="progress-fill" class="progress-fill"></div>
+                                    </div>
+                                    <div class="time-display">
+                                        <span id="current-time">0:00</span>
+                                        <span id="duration">0:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <audio id="audio-element" preload="metadata">
+                            <source id="audio-source" type="audio/mpeg">
+                            Ihr Browser unterstützt das Audio-Element nicht.
+                        </audio>
+                    </div>
                 </div>
             </div>
         </div>

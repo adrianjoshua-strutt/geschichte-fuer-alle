@@ -2,134 +2,83 @@
 (function() {
     'use strict';
     
-    // Text-to-Speech functionality using Web Speech API
-    let speechSynthesis = window.speechSynthesis;
-    let currentUtterance = null;
-    let isPaused = false;
+    // MP3 Player functionality
+    let audioElement = null;
+    let playPauseBtn = null;
+    let progressFill = null;
+    let currentTimeEl = null;
+    let durationEl = null;
     
-    // TTS Control functions
-    function initializeTTS() {
-        const playBtn = document.getElementById('tts-play-btn');
-        const pauseBtn = document.getElementById('tts-pause-btn');
-        const stopBtn = document.getElementById('tts-stop-btn');
+    // Initialize MP3 Player
+    function initializeMP3Player() {
+        audioElement = document.getElementById('audio-element');
+        playPauseBtn = document.getElementById('play-pause-btn');
+        progressFill = document.getElementById('progress-fill');
+        currentTimeEl = document.getElementById('current-time');
+        durationEl = document.getElementById('duration');
         
-        if (playBtn) {
-            playBtn.addEventListener('click', playText);
-        }
-        if (pauseBtn) {
-            pauseBtn.addEventListener('click', pauseText);
-        }
-        if (stopBtn) {
-            stopBtn.addEventListener('click', stopText);
-        }
-    }
-    
-    function playText() {
-        const textContent = document.getElementById('text-content');
-        const playBtn = document.getElementById('tts-play-btn');
-        const pauseBtn = document.getElementById('tts-pause-btn');
-        const stopBtn = document.getElementById('tts-stop-btn');
+        if (!audioElement || !playPauseBtn) return;
         
-        if (!textContent || !textContent.textContent.trim()) {
-            // Show error in the UI instead of alert
-            const controls = document.getElementById('tts-controls');
-            const errorMsg = document.createElement('div');
-            errorMsg.style.color = '#e74c3c';
-            errorMsg.style.marginTop = '10px';
-            errorMsg.style.fontSize = '0.9rem';
-            errorMsg.textContent = 'Kein Text zum Vorlesen gefunden.';
-            controls.appendChild(errorMsg);
-            setTimeout(() => errorMsg.remove(), 3000);
-            return;
-        }
+        // Play/Pause button click
+        playPauseBtn.addEventListener('click', togglePlayPause);
         
-        // If paused, resume
-        if (isPaused && currentUtterance) {
-            speechSynthesis.resume();
-            isPaused = false;
-            playBtn.style.display = 'none';
-            pauseBtn.style.display = 'inline-block';
-            stopBtn.style.display = 'inline-block';
-            return;
-        }
+        // Update progress bar and time
+        audioElement.addEventListener('timeupdate', updateProgress);
         
-        // Stop any ongoing speech
-        speechSynthesis.cancel();
-        
-        // Create new utterance
-        currentUtterance = new SpeechSynthesisUtterance(textContent.textContent);
-        
-        // Set German as the default language
-        currentUtterance.lang = 'de-DE';
-        
-        // Try to find a German voice (voices should be loaded by now)
-        const voices = speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
-            if (germanVoice) {
-                currentUtterance.voice = germanVoice;
+        // Update duration when metadata is loaded
+        audioElement.addEventListener('loadedmetadata', function() {
+            if (durationEl) {
+                durationEl.textContent = formatTime(audioElement.duration);
             }
-        }
+        });
         
-        // Set speech parameters
-        currentUtterance.rate = 0.9; // Slightly slower for better comprehension
-        currentUtterance.pitch = 1.0;
-        currentUtterance.volume = 1.0;
+        // Reset button when audio ends
+        audioElement.addEventListener('ended', function() {
+            playPauseBtn.classList.remove('playing');
+            playPauseBtn.querySelector('.play-icon').textContent = '▶';
+            if (progressFill) progressFill.style.width = '0%';
+            if (currentTimeEl) currentTimeEl.textContent = '0:00';
+        });
         
-        // Event handlers
-        currentUtterance.onstart = function() {
-            playBtn.style.display = 'none';
-            pauseBtn.style.display = 'inline-block';
-            stopBtn.style.display = 'inline-block';
-        };
-        
-        currentUtterance.onend = function() {
-            playBtn.style.display = 'inline-block';
-            pauseBtn.style.display = 'none';
-            stopBtn.style.display = 'none';
-            isPaused = false;
-            currentUtterance = null;
-        };
-        
-        currentUtterance.onerror = function(event) {
-            console.error('Speech synthesis error:', event);
-            playBtn.style.display = 'inline-block';
-            pauseBtn.style.display = 'none';
-            stopBtn.style.display = 'none';
-            isPaused = false;
-            currentUtterance = null;
-        };
-        
-        // Start speaking
-        speechSynthesis.speak(currentUtterance);
-    }
-    
-    function pauseText() {
-        const playBtn = document.getElementById('tts-play-btn');
-        const pauseBtn = document.getElementById('tts-pause-btn');
-        
-        if (speechSynthesis.speaking && !isPaused) {
-            speechSynthesis.pause();
-            isPaused = true;
-            playBtn.style.display = 'inline-block';
-            playBtn.textContent = '▶ Fortsetzen';
-            pauseBtn.style.display = 'none';
+        // Click on progress bar to seek
+        const progressContainer = document.querySelector('.progress-bar');
+        if (progressContainer) {
+            progressContainer.addEventListener('click', function(e) {
+                if (!audioElement.duration) return;
+                const rect = progressContainer.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                audioElement.currentTime = percent * audioElement.duration;
+            });
         }
     }
     
-    function stopText() {
-        const playBtn = document.getElementById('tts-play-btn');
-        const pauseBtn = document.getElementById('tts-pause-btn');
-        const stopBtn = document.getElementById('tts-stop-btn');
+    function togglePlayPause() {
+        if (!audioElement) return;
         
-        speechSynthesis.cancel();
-        isPaused = false;
-        currentUtterance = null;
+        if (audioElement.paused) {
+            audioElement.play();
+            playPauseBtn.classList.add('playing');
+            playPauseBtn.querySelector('.play-icon').textContent = '⏸';
+        } else {
+            audioElement.pause();
+            playPauseBtn.classList.remove('playing');
+            playPauseBtn.querySelector('.play-icon').textContent = '▶';
+        }
+    }
+    
+    function updateProgress() {
+        if (!audioElement || !audioElement.duration) return;
         
-        playBtn.style.display = 'inline-block';
-        playBtn.textContent = '▶ Text vorlesen';
-        pauseBtn.style.display = 'none';
-        stopBtn.style.display = 'none';
+        const percent = (audioElement.currentTime / audioElement.duration) * 100;
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(audioElement.currentTime);
+    }
+    
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return mins + ':' + (secs < 10 ? '0' : '') + secs;
     }
     
     // Get the page from URL parameter or path
@@ -217,8 +166,12 @@
             if (hasAudio) {
                 audioPlayerEl.style.display = 'block';
                 audioSourceEl.src = `content/${pageName}.mp3`;
-                const audioEl = audioPlayerEl.querySelector('audio');
-                audioEl.load();
+                const audioEl = document.getElementById('audio-element');
+                if (audioEl) {
+                    audioEl.load();
+                    // Reinitialize player controls for new audio
+                    initializeMP3Player();
+                }
             } else {
                 audioPlayerEl.style.display = 'none';
             }
@@ -243,24 +196,11 @@
     window.addEventListener('DOMContentLoaded', function() {
         const pageName = getCurrentPage();
         loadContent(pageName);
-        initializeTTS();
-        
-        // Ensure voices are loaded for speech synthesis
-        // Voices may not be available immediately on some browsers
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = function() {
-                // Voices are now loaded and ready to use
-                const voices = speechSynthesis.getVoices();
-                console.log('Loaded ' + voices.length + ' voices for TTS');
-            };
-        }
-        // Also trigger voice loading immediately
-        speechSynthesis.getVoices();
+        initializeMP3Player();
     });
     
     // Handle browser back/forward
     window.addEventListener('popstate', function() {
-        stopText(); // Stop TTS when navigating
         const pageName = getCurrentPage();
         loadContent(pageName);
     });
