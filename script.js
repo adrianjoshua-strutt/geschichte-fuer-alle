@@ -5,9 +5,8 @@
     // MP3 Player functionality
     let audioElement = null;
     let playPauseBtn = null;
+    let restartBtn = null;
     let progressFill = null;
-    let currentTimeEl = null;
-    let durationEl = null;
     let progressContainer = null;
     let listenersAttached = false;
     
@@ -16,9 +15,8 @@
         // Update element references (these may change when content loads)
         audioElement = document.getElementById('audio-element');
         playPauseBtn = document.getElementById('play-pause-btn');
+        restartBtn = document.getElementById('restart-btn');
         progressFill = document.getElementById('progress-fill');
-        currentTimeEl = document.getElementById('current-time');
-        durationEl = document.getElementById('duration');
         progressContainer = document.querySelector('.progress-bar');
         
         if (!audioElement || !playPauseBtn) return;
@@ -28,15 +26,13 @@
             // Play/Pause button click
             playPauseBtn.addEventListener('click', togglePlayPause);
             
-            // Update progress bar and time
-            audioElement.addEventListener('timeupdate', updateProgress);
+            // Restart button click
+            if (restartBtn) {
+                restartBtn.addEventListener('click', restartAudio);
+            }
             
-            // Update duration when metadata is loaded
-            audioElement.addEventListener('loadedmetadata', function() {
-                if (durationEl) {
-                    durationEl.textContent = formatTime(audioElement.duration);
-                }
-            });
+            // Update progress bar
+            audioElement.addEventListener('timeupdate', updateProgress);
             
             // Reset button when audio ends
             audioElement.addEventListener('ended', function() {
@@ -46,7 +42,6 @@
                     if (playIcon) playIcon.textContent = '▶';
                 }
                 if (progressFill) progressFill.style.width = '0%';
-                if (currentTimeEl) currentTimeEl.textContent = '0:00';
             });
             
             // Click on progress bar to seek
@@ -72,7 +67,9 @@
         const playIcon = playPauseBtn ? playPauseBtn.querySelector('.play-icon') : null;
         
         if (audioElement.paused) {
-            audioElement.play();
+            audioElement.play().catch(function(error) {
+                console.error('Playback error:', error);
+            });
             if (playPauseBtn) playPauseBtn.classList.add('playing');
             if (playIcon) playIcon.textContent = '⏸';
         } else {
@@ -82,19 +79,25 @@
         }
     }
     
+    function restartAudio() {
+        if (!audioElement) return;
+        
+        audioElement.currentTime = 0;
+        if (progressFill) progressFill.style.width = '0%';
+        
+        // If audio was playing, keep it playing
+        if (!audioElement.paused) {
+            audioElement.play().catch(function(error) {
+                console.error('Playback error:', error);
+            });
+        }
+    }
+    
     function updateProgress() {
         if (!audioElement || !isFinite(audioElement.duration)) return;
         
         const percent = (audioElement.currentTime / audioElement.duration) * 100;
         if (progressFill) progressFill.style.width = percent + '%';
-        if (currentTimeEl) currentTimeEl.textContent = formatTime(audioElement.currentTime);
-    }
-    
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return '0:00';
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return mins + ':' + (secs < 10 ? '0' : '') + secs;
     }
     
     // Get the page from URL parameter or path

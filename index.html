@@ -24,8 +24,6 @@
             <div id="display" style="display: none;">
                 <h2 id="title"></h2>
                 
-                <div id="text-content"></div>
-                
                 <!-- MP3 Player -->
                 <div id="audio-player" style="display: none;">
                     <div class="mp3-player-container">
@@ -34,14 +32,13 @@
                             <button id="play-pause-btn" class="play-button" aria-label="Wiedergabe">
                                 <span class="play-icon">▶</span>
                             </button>
+                            <button id="restart-btn" class="restart-button" aria-label="Neustart">
+                                <span class="restart-icon">⏮</span>
+                            </button>
                             <div class="player-info">
                                 <div class="progress-container">
                                     <div class="progress-bar">
                                         <div id="progress-fill" class="progress-fill"></div>
-                                    </div>
-                                    <div class="time-display">
-                                        <span id="current-time">0:00</span>
-                                        <span id="duration">0:00</span>
                                     </div>
                                 </div>
                             </div>
@@ -52,6 +49,8 @@
                         </audio>
                     </div>
                 </div>
+                
+                <div id="text-content"></div>
             </div>
         </div>
     </main>
