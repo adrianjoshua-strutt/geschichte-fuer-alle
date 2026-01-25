@@ -52,7 +52,7 @@
             progressContainer = document.querySelector('.progress-bar');
             if (progressContainer) {
                 progressContainer.addEventListener('click', function(e) {
-                    if (!audioElement || !audioElement.duration) return;
+                    if (!audioElement || !isFinite(audioElement.duration)) return;
                     const rect = progressContainer.getBoundingClientRect();
                     const percent = (e.clientX - rect.left) / rect.width;
                     audioElement.currentTime = percent * audioElement.duration;
@@ -66,19 +66,21 @@
     function togglePlayPause() {
         if (!audioElement) return;
         
+        const playIcon = playPauseBtn ? playPauseBtn.querySelector('.play-icon') : null;
+        
         if (audioElement.paused) {
             audioElement.play();
-            playPauseBtn.classList.add('playing');
-            playPauseBtn.querySelector('.play-icon').textContent = '⏸';
+            if (playPauseBtn) playPauseBtn.classList.add('playing');
+            if (playIcon) playIcon.textContent = '⏸';
         } else {
             audioElement.pause();
-            playPauseBtn.classList.remove('playing');
-            playPauseBtn.querySelector('.play-icon').textContent = '▶';
+            if (playPauseBtn) playPauseBtn.classList.remove('playing');
+            if (playIcon) playIcon.textContent = '▶';
         }
     }
     
     function updateProgress() {
-        if (!audioElement || !audioElement.duration) return;
+        if (!audioElement || !isFinite(audioElement.duration)) return;
         
         const percent = (audioElement.currentTime / audioElement.duration) * 100;
         if (progressFill) progressFill.style.width = percent + '%';
