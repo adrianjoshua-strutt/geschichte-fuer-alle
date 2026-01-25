@@ -163,37 +163,6 @@ main {
     margin-left: 0;
 }
 
-.restart-button {
-    flex-shrink: 0;
-    width: 60px;
-    height: 60px;
-    border: none;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.restart-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-}
-
-.restart-button:active {
-    transform: scale(1.05);
-}
-
-.restart-icon {
-    display: inline-block;
-    line-height: 1;
-}
-
 .player-info {
     flex: 1;
     display: flex;
@@ -287,12 +256,6 @@ footer p {
         height: 70px;
         font-size: 1.8rem;
     }
-    
-    .restart-button {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
-    }
 }
 
 @media (max-width: 480px) {
@@ -329,11 +292,5 @@ footer p {
         width: 60px;
         height: 60px;
         font-size: 1.6rem;
-    }
-    
-    .restart-button {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
     }
 }

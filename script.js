@@ -5,7 +5,6 @@
     // MP3 Player functionality
     let audioElement = null;
     let playPauseBtn = null;
-    let restartBtn = null;
     let progressFill = null;
     let progressContainer = null;
     let listenersAttached = false;
@@ -15,7 +14,6 @@
         // Update element references (these may change when content loads)
         audioElement = document.getElementById('audio-element');
         playPauseBtn = document.getElementById('play-pause-btn');
-        restartBtn = document.getElementById('restart-btn');
         progressFill = document.getElementById('progress-fill');
         progressContainer = document.querySelector('.progress-bar');
         
@@ -25,11 +23,6 @@
         if (!listenersAttached) {
             // Play/Pause button click
             playPauseBtn.addEventListener('click', togglePlayPause);
-            
-            // Restart button click
-            if (restartBtn) {
-                restartBtn.addEventListener('click', restartAudio);
-            }
             
             // Update progress bar
             audioElement.addEventListener('timeupdate', updateProgress);
@@ -76,20 +69,6 @@
             audioElement.pause();
             if (playPauseBtn) playPauseBtn.classList.remove('playing');
             if (playIcon) playIcon.textContent = '▶';
-        }
-    }
-    
-    function restartAudio() {
-        if (!audioElement) return;
-        
-        audioElement.currentTime = 0;
-        if (progressFill) progressFill.style.width = '0%';
-        
-        // If audio was playing, keep it playing
-        if (!audioElement.paused) {
-            audioElement.play().catch(function(error) {
-                console.error('Playback error:', error);
-            });
         }
     }
     
